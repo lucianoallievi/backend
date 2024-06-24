@@ -1,8 +1,1 @@
-[
-  { "id": "d6cd052756a548bfb593a1bc" },
-  { "id": "07a2afed5b01ce48a4d02429" },
-  {
-    "id": "8b0387a2bab20f510a58f2d8",
-    "products": [{ "id": "71c11a15ca09930d9b66508c", "quantity": 1 }]
-  }
-]
+[{"id":"d6cd052756a548bfb593a1bc"},{"id":"07a2afed5b01ce48a4d02429"},{"id":"8b0387a2bab20f510a58f2d8","products":[{"id":"71c11a15ca09930d9b66508c","quantity":3}]}]

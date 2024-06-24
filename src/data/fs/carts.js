@@ -50,15 +50,14 @@ export default class CartManager {
   };
 
   updateCarts = async (updatedCart) => {
-    let carts = await this.#readCarts();
-    console.log(carts);
-    console.log(
-      "index de id:",
-      updatedCart.id,
-      ": ",
-      carts.indexOf((each) => each.id == updatedCart.id)
-    );
-    carts[carts.indexOf((each) => each.id == updatedCart.id)] = updatedCart;
-    await this.#writeCarts(carts);
+    const carts = await this.#readCarts();
+    const newCarts = carts.map((each) => {
+      if (each.id == updatedCart.id) {
+        return updatedCart;
+      } else {
+        return each;
+      }
+    });
+    await this.#writeCarts(newCarts);
   };
 }
