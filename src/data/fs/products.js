@@ -33,9 +33,9 @@ export default class ProductsManager {
 
     products.push(newProduct);
 
-    const productsJSON = JSON.stringify(products, null, "\t");
+    const productsString = JSON.stringify(products, null, "\t");
 
-    await fs.promises.writeFile(this.#productsFilePath, productsJSON);
+    await fs.promises.writeFile(this.#productsFilePath, productsString);
   };
 
   createProduct = async (product) => {

@@ -6,7 +6,6 @@ const products = new ProductsManager();
 
 router.get("/", async (req, res) => {
   const allProducts = await products.getProducts();
-  console.log(allProducts);
   res.send(allProducts);
 });
 router.get("/:pid", async (req, res) => {
