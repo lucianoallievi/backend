@@ -1,0 +1,52 @@
+<header>
+  <h1>INICIO</h1>
+</header>
+
+<main>
+  <section>
+    <h3>Productos</h3>
+    <div
+      style="display: flex; flex-direction: column; gap: 0.5rem; width: 300px;"
+    >
+      <div style="height: 200px; border: 1px solid black;">
+        <ul
+          id="products-list"
+          style="list-style-position: inside; padding: 0; margin: 0.25rem;"
+        ></ul>
+      </div>
+      <button id="btn-refresh-products-list">Recargar Lista</button>
+    </div>
+  </section>
+
+  <section>
+    <h3>Formulario de Productos</h3>
+    <form
+      id="products-form"
+      style="display: flex; flex-direction: column; gap: 0.5rem; width: 300px"
+    >
+      <input type="text" name="name" placeholder="Nombre del producto" />
+      <input
+        type="text"
+        name="description"
+        placeholder="Descripción del producto"
+      />
+
+      <input type="submit" value="Guardar" style="width: 100%" />
+    </form>
+  </section>
+
+  <section>
+    <h3>Eliminación de Productos</h3>
+    <div style="display: flex; gap: 0.5rem; width: 300px">
+      <input
+        type="number"
+        id="input-product-id"
+        placeholder="ID del Producto"
+        style="width: 100%"
+      />
+      <button id="btn-delete-product">Eliminar</button>
+    </div>
+  </section>
+</main>
+
+<script src="/api/public/js/products_with_http.js"></script>

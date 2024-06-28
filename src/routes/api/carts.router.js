@@ -1,6 +1,6 @@
 import { Router } from "express";
-import CartManager from "../data/fs/carts.js";
-import ProductsManager from "../data/fs/products.js";
+import CartManager from "../../data/fs/carts.js";
+import ProductsManager from "../../data/fs/products.js";
 
 const router = Router();
 const carts = new CartManager();
@@ -25,7 +25,8 @@ router.get("/:cid", async (req, resp) => {
   resp.send({ id: cart.id, products: productsInCart });
 });
 router.post("/:cid/products/:pid", async (req, resp) => {
-  let cart = await carts.getCartById(req.params.cid);
+  const cart = await carts.getCartById(req.params.cid);
+  let newCart = {};
   const product = await products.getProductByID(req.params.pid);
   //si no existe carrito
   if (!cart) {
@@ -41,7 +42,8 @@ router.post("/:cid/products/:pid", async (req, resp) => {
   if (cart.products.find((each) => each.id == product.id)) {
     cart.products = cart.products.map((each) => {
       if ((each.id = product.id)) {
-        return { id: each.id, quantity: ++each.quantity };
+        console.log(each.id, " ", product.id);
+        return { id: each.id, quantity: each.quantity + 1 };
       } else {
         return each;
       }
