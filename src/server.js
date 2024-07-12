@@ -5,6 +5,7 @@ import cartsRouter from "./routes/api/carts.router.js";
 import homeRouter from "./routes/app/home.router.js";
 import handlebars from "./config/handlebars.config.js";
 import serverSocket from "./config/socket.config.js";
+import mongoDB from "./config/mongoose.config.js";
 
 const HOST = "localhost";
 const PORT = 8080;
@@ -25,6 +26,7 @@ server.use("/api/carts", cartsRouter);
 
 const serverHTTP = server.listen(PORT, () => {
   console.log(`Ejecutándose en http://${HOST}:${PORT}`);
+  mongoDB.connectDB();
 });
 
 handlebars.config(server);
