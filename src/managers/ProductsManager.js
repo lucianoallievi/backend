@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import productModel from "../models/product.model.js";
+import ProductModel from "../models/ProductModel.js";
 import mongoDB from "../config/mongoose.config.js";
 
 import {
@@ -12,7 +12,7 @@ export default class ProductsManager {
   #productModel;
 
   constructor() {
-    this.#productModel = productModel;
+    this.#productModel = ProductModel;
   }
 
   getAll = async (paramFilters) => {
@@ -63,5 +63,56 @@ export default class ProductsManager {
     }
   };
 
-  insertOne = async () => {};
+  insertOne = async (data) => {
+    try {
+      const productCreated = new ProductModel(data);
+      await productCreated.save();
+
+      return productCreated;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  updateOneById = async (id, data) => {
+    try {
+      if (!mongoDB.isValidID(id)) {
+        throw new Error(ERROR_INVALID_ID);
+      }
+      const productFound = await this.#productModel.findById(id);
+
+      if (!productFound) throw new Error(ERROR_NOT_FOUND_ID);
+
+      productFound.title = data.title;
+      productFound.description = data.description;
+      productFound.code = data.code;
+      productFound.price = data.price;
+      productFound.stock = data.stock;
+      productFound.category = data.category;
+
+      await productFound.save();
+
+      return productFound;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  deleteOneById = async (id) => {
+    try {
+      if (!mongoDB.isValidID(id)) {
+        throw new Error(ERROR_INVALID_ID);
+      }
+
+      const productFound = await this.#productModel.findById(id);
+
+      if (!productFound) throw new Error(ERROR_NOT_FOUND_ID);
+
+      await this.#productModel.findByIdAndDelete(id);
+
+      return productFound;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
 }

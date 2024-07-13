@@ -1,5 +1,5 @@
 import { Router } from "express";
-import ProductManager from "../../managers/ProductManager.js";
+import ProductsManager from "../../managers/ProductsManager.js";
 
 import {
   ERROR_INVALID_ID,
@@ -15,7 +15,7 @@ const errorHandler = (res, message) => {
 };
 
 const router = Router();
-const productsManager = new ProductManager();
+const productsManager = new ProductsManager();
 
 router.get("/", async (req, res) => {
   try {
@@ -26,9 +26,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:pid", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const productFound = await productsManager.getOneByID(req.params.pid);
+    const productFound = await productsManager.getOneByID(req.params.id);
     res.status(200).json({ status: true, payload: productFound });
   } catch (error) {
     errorHandler(res, error.message);
@@ -37,17 +37,35 @@ router.get("/:pid", async (req, res) => {
   res.send();
 });
 
-/*
 router.post("/", async (req, res) => {
-  const { title, description, code, price, stock, category } = req.body;
-
-  if (!(title && description && code && price && stock && category)) {
-    res.send("falta campos obligatorios");
-  } else {
-    const newProduct = { status: true, ...req.body };
-
-    res.send(await products.createProduct(newProduct));
+  try {
+    const productCreated = await productsManager.insertOne(req.body);
+    res.status(201).json({ status: true, payload: productCreated });
+  } catch (error) {
+    errorHandler(res, error.message);
   }
 });
-*/
+
+router.put("/:id", async (req, res) => {
+  try {
+    const productUpdated = await productsManager.updateOneById(
+      req.params.id,
+      req.body
+    );
+    res.status(200).json({ status: true, payload: productUpdated });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const productDeleted = await productsManager.deleteOneById(req.params.id);
+
+    res.status(200).json({ status: true, payload: productDeleted });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+
 export default router;
