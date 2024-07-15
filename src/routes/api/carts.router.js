@@ -1,61 +1,67 @@
 import { Router } from "express";
-import CartManager from "../../data/fs/carts.js";
-import ProductsManager from "../../data/fs/products.js";
+import CartsManager from "../../managers/CartsManager.js";
+import ProductsManager from "../../managers/ProductsManager.js";
+
+import {
+  ERROR_INVALID_ID,
+  ERROR_NOT_FOUND_ID,
+} from "../../constants/messages.constants.js";
 
 const router = Router();
-const carts = new CartManager();
+const cartsManager = new CartsManager();
 const products = new ProductsManager();
 
-router.post("/", (req, resp) => {
-  const products = req.body.products ? req.body.products : { products: [] };
-  const cart = carts.createCart(products);
-  resp.send(cart);
-});
-router.get("/:cid", async (req, resp) => {
-  const cid = req.params.cid;
-  const cart = await carts.getCartById(cid);
-  const allProducts = await products.getProducts();
-  const productsInCart = [];
-  cart.products.map((each) => {
-    allProducts.map((eachProduct) => {
-      if (each.id == eachProduct.id)
-        productsInCart.push({ quantity: each.quantity, ...eachProduct });
-    });
-  });
-  resp.send({ id: cart.id, products: productsInCart });
-});
-router.post("/:cid/products/:pid", async (req, resp) => {
-  const cart = await carts.getCartById(req.params.cid);
-  let newCart = {};
-  const product = await products.getProductByID(req.params.pid);
-  //si no existe carrito
-  if (!cart) {
-    resp.send("Cart no disponible");
-    return false;
-  }
-  //si no existe producto
-  if (!product) {
-    resp.send("Producto no disponible");
-    return false;
-  }
-  //si es un producto ya existente en el carrito, sumo uno valor a la cantidad
-  if (cart.products.find((each) => each.id == product.id)) {
-    cart.products = cart.products.map((each) => {
-      if ((each.id = product.id)) {
-        console.log(each.id, " ", product.id);
-        return { id: each.id, quantity: each.quantity + 1 };
-      } else {
-        return each;
-      }
-    });
-  }
-  //si el producto no existía en el carrito
-  else {
-    cart.products.push({ id: product.id, quantity: 1 });
-  }
+const errorHandler = (res, message) => {
+  if (message === ERROR_INVALID_ID)
+    return res.status(400).json({ status: false, message: ERROR_INVALID_ID });
+  if (message === ERROR_NOT_FOUND_ID)
+    return res.status(404).json({ status: false, message: ERROR_NOT_FOUND_ID });
+  return res.status(500).json({ status: false, message });
+};
 
-  carts.updateCarts(cart);
-  resp.send(cart);
+router.post("/", async (req, res) => {
+  try {
+    const cartCreated = await cartsManager.insertOne(req.body);
+    res.status(201).json({ status: true, payload: cartCreated });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const cartFound = await cartsManager.getOneById(req.params.id);
+    res.status(200).json({ status: true, payload: cartFound });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const cartFound = await cartsManager.emptyOneCartById(req.params.id);
+    res.status(200).json({ status: true, payload: cartFound });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    const cartsFound = await cartsManager.getAll();
+    res.status(200).json({ status: true, payload: cartsFound });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+router.post("/:cid/products/:pid", async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    const cartFound = await cartsManager.insertProduct(cid, pid);
+    res.status(200).json({ status: true, payload: cartFound });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
 });
 
 export default router;

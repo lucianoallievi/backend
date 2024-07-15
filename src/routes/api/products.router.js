@@ -10,7 +10,7 @@ const errorHandler = (res, message) => {
   if (message === ERROR_INVALID_ID)
     return res.status(400).json({ status: false, message: ERROR_INVALID_ID });
   if (message === ERROR_NOT_FOUND_ID)
-    return res.status(400).json({ status: false, message: ERROR_NOT_FOUND_ID });
+    return res.status(404).json({ status: false, message: ERROR_NOT_FOUND_ID });
   return res.status(500).json({ status: false, message });
 };
 

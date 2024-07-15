@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import ProductModel from "../models/ProductModel.js";
+import productModel from "../models/product.model.js";
 import mongoDB from "../config/mongoose.config.js";
 
 import {
@@ -12,7 +12,7 @@ export default class ProductsManager {
   #productModel;
 
   constructor() {
-    this.#productModel = ProductModel;
+    this.#productModel = productModel;
   }
 
   getAll = async (paramFilters) => {

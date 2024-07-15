@@ -14,6 +14,7 @@ const productSchema = new Schema(
     },
     code: {
       type: String,
+      unique: true,
       required: [true, "El código es requerido"],
       uppercase: true,
     },
@@ -32,9 +33,9 @@ const productSchema = new Schema(
 );
 
 productSchema.plugin(paginate);
-const ProductModel = model("products", productSchema);
+const productModel = model("products", productSchema);
 
-export default ProductModel;
+export default productModel;
 
 /*
 "id": "afa7057f7e7fa4d703363e7d",

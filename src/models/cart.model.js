@@ -1,26 +1,19 @@
 import { Schema, model } from "mongoose";
 
 const productSchema = new Schema({
-  productId: {
-    type: Schema.Types.ObjectId,
+  _id: {
+    type: String,
     ref: "Product",
-    required: true,
+    unique: true,
   },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1,
-  },
+  quantity: { type: Number, default: 1 },
 });
 
 const cartSchema = new Schema(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    products: {
+      type: [productSchema],
     },
-    products: [productSchema],
   },
   {
     timestamps: true,
@@ -28,6 +21,20 @@ const cartSchema = new Schema(
   }
 );
 
-const cartModel = mongoose.model("carts", cartSchema);
+cartSchema.pre("save", function (next) {
+  const products = this.products;
+  const uniqueProducts = new Set(products.map((product) => product._id));
+  console.log(typeof uniqueProducts);
+  if (uniqueProducts.size !== products.length) {
+    const error = new Error(
+      "No se permiten productos duplicados en el carrito"
+    );
+    next(error);
+  } else {
+    next();
+  }
+});
+
+const cartModel = model("carts", cartSchema);
 
 export default cartModel;
