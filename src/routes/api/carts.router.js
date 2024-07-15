@@ -46,6 +46,17 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:cid/products/:pid", async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+
+    const cartFound = await cartsManager.eraseCartProductById(cid, pid);
+    res.status(200).json({ status: true, payload: cartFound });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const cartsFound = await cartsManager.getAll();
@@ -54,10 +65,10 @@ router.get("/", async (req, res) => {
     errorHandler(res, error.message);
   }
 });
-router.post("/:cid/products/:pid", async (req, res) => {
+router.put("/:cid/products/:pid", async (req, res) => {
   try {
     const { cid, pid } = req.params;
-    const cartFound = await cartsManager.insertProduct(cid, pid);
+    const cartFound = await cartsManager.addProduct(cid, pid, req.body);
     res.status(200).json({ status: true, payload: cartFound });
   } catch (error) {
     errorHandler(res, error.message);

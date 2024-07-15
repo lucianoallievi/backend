@@ -20,7 +20,7 @@ export default class CartsManager {
       const newCart = new cartModel();
       data.map((each) => {
         newCart.products.push({
-          _id: each.productId,
+          product_id: each.productId,
           quantity: 1,
         });
       });
@@ -74,7 +74,7 @@ export default class CartsManager {
     }
   };
 
-  insertProduct = async (cid, pid) => {
+  addProduct = async (cid, pid, data) => {
     try {
       if (!mongoDB.isValidID(cid)) {
         throw new Error(ERROR_INVALID_ID);
@@ -83,12 +83,13 @@ export default class CartsManager {
 
       if (!cartFound) throw new Error(ERROR_NOT_FOUND_ID);
       const index = cartFound.products.findIndex(
-        (product) => product._id == pid
+        (product) => product.product_id == pid
       );
       if (index > -1) {
-        cartFound.products[index].quantity++;
+        cartFound.products[index].quantity =
+          cartFound.products[index].quantity + data.quantity;
       } else {
-        cartFound.products.push({ _id: pid });
+        cartFound.products.push({ product_id: pid, quantity: data.quantity });
       }
 
       await cartFound.save();
@@ -111,6 +112,37 @@ export default class CartsManager {
       }
 
       cartFound.products = [];
+      await cartFound.save();
+      return cartFound;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  eraseCartProductById = async (cid, pid) => {
+    try {
+      if (!mongoDB.isValidID(cid)) {
+        throw new Error(ERROR_INVALID_ID);
+      }
+
+      const cartFound = await this.#cartModel.findById(cid);
+      if (!cartFound) {
+        throw new Error(ERROR_NOT_FOUND_ID);
+      }
+
+      const index = cartFound.products.findIndex(
+        (product) => product.product_id == pid
+      );
+      if (index > -1) {
+        const newProducts = [];
+
+        cartFound.products.map((product) => {
+          product.product_id != pid && newProducts.push(product);
+        });
+        cartFound.products = newProducts;
+      } else {
+        throw new Error(ERROR_NOT_FOUND_ID);
+      }
       await cartFound.save();
       return cartFound;
     } catch (error) {
