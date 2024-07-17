@@ -20,8 +20,8 @@ export default class CartsManager {
       const newCart = new cartModel();
       data.map((each) => {
         newCart.products.push({
-          product_id: each.productId,
-          quantity: 1,
+          product: each.productId,
+          amount: 1,
         });
       });
       await newCart.save();
@@ -31,9 +31,20 @@ export default class CartsManager {
     }
   };
 
-  getAll = async () => {
+  getAll = async (paramFilters) => {
     try {
-      const cartsFound = await this.#cartModel.find();
+      const sort = {
+        asc: { name: 1 },
+        desc: { name: -1 },
+      };
+      const paginationOptions = {
+        limit: paramFilters?.limit ?? 5,
+        page: paramFilters?.page ?? 1,
+        sort: sort[paramFilters?.sort] ?? {},
+        populate: "products.product",
+        lean: true,
+      };
+      const cartsFound = await this.#cartModel.paginate({}, paginationOptions);
       return cartsFound;
       return;
     } catch (error) {
@@ -47,7 +58,10 @@ export default class CartsManager {
         throw new Error(ERROR_INVALID_ID);
       }
 
-      const cartFound = await this.#cartModel.findById(id);
+      const cartFound = await this.#cartModel
+        .findById(id)
+        .populate("products.product")
+        .lean();
 
       if (!cartFound) throw new Error(ERROR_NOT_FOUND_ID);
 
@@ -83,13 +97,12 @@ export default class CartsManager {
 
       if (!cartFound) throw new Error(ERROR_NOT_FOUND_ID);
       const index = cartFound.products.findIndex(
-        (product) => product.product_id == pid
+        (product) => product.product == pid
       );
       if (index > -1) {
-        cartFound.products[index].quantity =
-          cartFound.products[index].quantity + data.quantity;
+        cartFound.products[index].amount += data.amount;
       } else {
-        cartFound.products.push({ product_id: pid, quantity: data.quantity });
+        cartFound.products.push({ product: pid, amount: data.amount });
       }
 
       await cartFound.save();

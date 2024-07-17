@@ -3,7 +3,7 @@ import paginate from "mongoose-paginate-v2";
 
 const productSchema = new Schema(
   {
-    title: {
+    name: {
       type: String,
       required: [true, "El nombre es requerido"],
       uppercase: true,

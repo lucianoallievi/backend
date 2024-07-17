@@ -18,13 +18,16 @@ export default class ProductsManager {
   getAll = async (paramFilters) => {
     try {
       const $and = [];
-      console.log(paramFilters.title);
-      if (paramFilters?.title) $and.push({ title: paramFilters.title });
-      if (paramFilters?.code) $and.push({ code: paramFilters.code });
+
+      if (paramFilters?.name)
+        $and.push({ name: { $regex: paramFilters.name, $options: "i" } });
       if (paramFilters?.category)
         $and.push({ category: paramFilters.category });
-
-      const filters = $and.lenght > 0 ? { $and } : {};
+      if (paramFilters?.availability)
+        $and.push({
+          availability: convertToBoolean(paramFilters.availability),
+        });
+      const filters = $and.length > 0 ? { $and } : {};
 
       const sort = {
         asc: { name: 1 },
@@ -32,9 +35,10 @@ export default class ProductsManager {
       };
 
       const paginationOptions = {
-        limit: paramFilters.limit ?? 10,
-        page: paramFilters.page ?? 1,
+        limit: paramFilters?.limit ?? 5,
+        page: paramFilters?.page ?? 1,
         sort: sort[paramFilters?.sort] ?? {},
+        lean: true,
       };
       const productsFound = await this.#productModel.paginate(
         filters,
@@ -65,7 +69,7 @@ export default class ProductsManager {
 
   insertOne = async (data) => {
     try {
-      const productCreated = new ProductModel(data);
+      const productCreated = new productModel(data);
       await productCreated.save();
 
       return productCreated;
@@ -83,7 +87,7 @@ export default class ProductsManager {
 
       if (!productFound) throw new Error(ERROR_NOT_FOUND_ID);
 
-      productFound.title = data.title;
+      productFound.name = data.name;
       productFound.description = data.description;
       productFound.code = data.code;
       productFound.price = data.price;

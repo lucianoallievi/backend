@@ -39,6 +39,15 @@ router.get("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
+    const cartFound = await cartsManager.deleteOneById(req.params.id);
+    res.status(200).json({ status: true, payload: cartFound });
+  } catch (error) {
+    errorHandler(res, error.message);
+  }
+});
+
+router.delete("/:id/products", async (req, res) => {
+  try {
     const cartFound = await cartsManager.emptyOneCartById(req.params.id);
     res.status(200).json({ status: true, payload: cartFound });
   } catch (error) {
@@ -59,7 +68,7 @@ router.delete("/:cid/products/:pid", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const cartsFound = await cartsManager.getAll();
+    const cartsFound = await cartsManager.getAll(req.query);
     res.status(200).json({ status: true, payload: cartsFound });
   } catch (error) {
     errorHandler(res, error.message);

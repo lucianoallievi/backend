@@ -1,11 +1,12 @@
 import { Schema, model } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 const productSchema = new Schema({
-  product_id: {
-    type: String,
-    ref: "Product",
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: "products",
   },
-  quantity: { type: Number, default: 1 },
+  amount: { type: Number, default: 1 },
 });
 
 const cartSchema = new Schema(
@@ -33,6 +34,10 @@ cartSchema.pre("save", function (next) {
     next();
   }
 });
+
+productSchema.plugin(paginate);
+
+cartSchema.plugin(paginate);
 
 const cartModel = model("carts", cartSchema);
 
