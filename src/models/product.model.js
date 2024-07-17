@@ -25,6 +25,7 @@ const productSchema = new Schema(
       required: [true, "La catergoría es requerida"],
       uppercase: true,
     },
+    available: { type: Boolean, default: true },
   },
   {
     timestamps: true,

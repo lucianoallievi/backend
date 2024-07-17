@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import productModel from "../models/product.model.js";
 import mongoDB from "../config/mongoose.config.js";
+import { convertToBoolean } from "../utils/converter.js";
 
 import {
   ERROR_DELETE_DOCUMENT,
@@ -23,9 +24,9 @@ export default class ProductsManager {
         $and.push({ name: { $regex: paramFilters.name, $options: "i" } });
       if (paramFilters?.category)
         $and.push({ category: paramFilters.category });
-      if (paramFilters?.availability)
+      if (paramFilters?.available)
         $and.push({
-          availability: convertToBoolean(paramFilters.availability),
+          available: convertToBoolean(paramFilters.available),
         });
       const filters = $and.length > 0 ? { $and } : {};
 
