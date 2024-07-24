@@ -10,7 +10,7 @@
     >
       <div style="height: 200px; border: 1px solid black;">
         <ul
-          id="ingredients-list"
+          id="products-table-rows"
           style="list-style-position: inside; padding: 0; margin: 0.25rem;"
         ></ul>
       </div>
@@ -20,7 +20,7 @@
   <section>
     <h3>Formulario de Productos</h3>
     <form
-      id="ingredients-form"
+      id="products-form"
       style="display: flex; flex-direction: column; gap: 0.5rem; width: 300px"
     >
       <input type="text" name="name" placeholder="Nombre del producto" />
@@ -29,6 +29,10 @@
         name="description"
         placeholder="Descripción del producto"
       />
+      <input type="text" name="code" placeholder="Código del producto" />
+      <input type="number" name="price" placeholder="Precio del producto" />
+      <input type="number" name="stock" placeholder="Stock del producto" />
+      <input type="text" name="category" placeholder="Categoria del producto" />
 
       <input type="submit" value="Guardar" style="width: 100%" />
     </form>
@@ -38,15 +42,15 @@
     <h3>Eliminación de Productos</h3>
     <div style="display: flex; gap: 0.5rem; width: 300px">
       <input
-        type="number"
-        id="input-ingredient-id"
+        type="text"
+        id="input-product-id"
         placeholder="ID del Producto"
         style="width: 100%"
       />
-      <button id="btn-delete-ingredient">Eliminar</button>
+      <button id="btn-delete-product">Eliminar</button>
     </div>
   </section>
 </main>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/api/public/js/products_with_websocket.js"></script>
+<script src="/public/js/products_with_websocket.js"></script>

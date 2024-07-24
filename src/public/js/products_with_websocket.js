@@ -1,13 +1,13 @@
 const socket = io();
 
 /* ********************** ELEMENTOS HTML *********************** */
-const ulProductsList = document.getElementById("products-list");
+const productsTableRows = document.getElementById("products-table-rows");
 const productsForm = document.getElementById("products-form");
-const inputProductId = document.getElementById("input-product-id");
-const btnDeleteProduct = document.getElementById("btn-delete-product");
+const inputproductId = document.getElementById("input-product-id");
+const btnDeleteproduct = document.getElementById("btn-delete-product");
 
 /* ************************** EVENTOS ************************** */
-productsForm.onsubmit = (event) => {
+productsForm.onsubmit = async (event) => {
   event.preventDefault();
   const form = event.target;
   const formData = new FormData(form);
@@ -17,25 +17,33 @@ productsForm.onsubmit = (event) => {
   socket.emit("insert-product", {
     name: formData.get("name"),
     description: formData.get("description"),
+    code: formData.get("code"),
+    price: formData.get("price"),
+    stock: formData.get("stock"),
+    category: formData.get("category"),
   });
 };
 
-btnDeleteProduct.onclick = () => {
-  const id = Number(inputProductId.value);
-  inputProductId.value = "";
-
-  if (id > 0) {
+btnDeleteproduct.onclick = () => {
+  const id = inputproductId.value;
+  inputproductId.value = "";
+  if (id) {
     socket.emit("delete-product", { id });
   }
 };
 
 socket.on("products-list", (data) => {
-  const productsList = data.products ?? [];
-  ulProductsList.innerText = "";
+  const productsList = data.response.docs ?? [];
+  productsTableRows.innerText = "";
 
   productsList.forEach((product) => {
-    const li = document.createElement("li");
-    li.innerHTML = `<i>Id:</i> ${product.id} - <i>Nombre:</i> ${product.name}`;
-    ulProductsList.append(li);
+    const trproduct = `
+            <td>${product.id}</td>
+            <td>${product.name}</td>
+        `;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = trproduct;
+    productsTableRows.append(tr);
   });
 });

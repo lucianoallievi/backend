@@ -36,7 +36,7 @@ export default class ProductsManager {
       };
 
       const paginationOptions = {
-        limit: paramFilters?.limit ?? 5,
+        limit: paramFilters?.limit ?? 10,
         page: paramFilters?.page ?? 1,
         sort: sort[paramFilters?.sort] ?? {},
         lean: true,
@@ -45,7 +45,7 @@ export default class ProductsManager {
         filters,
         paginationOptions
       );
-      console.log(productsFound);
+      //console.log(productsFound);
       return productsFound;
     } catch (error) {
       throw new Error(error.message);

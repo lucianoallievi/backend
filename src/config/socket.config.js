@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
-import ProductsManager from "../data/fs/products.js";
+// import ProductsManager from "../data/fs/products.js";
+import ProductsManager from "../managers/ProductsManager.js";
 
 const pm = new ProductsManager();
 let serverSocket = null;
@@ -8,31 +9,29 @@ const config = (serverHTTP) => {
   serverSocket = new Server(serverHTTP);
 
   serverSocket.on("connection", async (socket) => {
-    const products = await pm.getProducts();
+    const response = await pm.getAll();
     console.log("Socket connected");
 
-    serverSocket.emit("products-list", { products });
+    serverSocket.emit("products-list", { response });
 
     socket.on("insert-product", async (data) => {
-      await pm.createProduct(data);
-      const products = await pm.getProducts();
+      await pm.insertOne(data);
 
-      serverSocket.emit("products-list", { products });
+      const response = await pm.getAll();
+      serverSocket.emit("products-list", { response });
     });
-
-    serverSocket.on("delete-product", async (data) => {
-      await pm.deleteProduct(data.id);
-      const products = await pm.getProducts();
-
-      serverSocket.emit("products-list", { products });
+    socket.on("delete-product", async (data) => {
+      await pm.deleteOneById(data.id);
+      const response = await pm.getAll();
+      serverSocket.emit("products-list", { response });
     });
   });
 };
 
 const updateProductsList = async () => {
-  const products = await pm.getProducts();
+  const response = await pm.getAll();
 
-  serverSocket.emit("products-list", { products });
+  serverSocket.emit("products-list", { response });
 };
 
 export default { config, updateProductsList };

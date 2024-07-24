@@ -11,8 +11,7 @@ const btnDeleteProduct = document.getElementById("btn-delete-product");
 const loadProductsList = async () => {
   const response = await fetch("/api/products", { method: "GET" });
   const data = await response.json();
-  const productsList = data.payload;
-  console.log("productsList", productsList);
+  const productsList = data.payload.docs;
   ulProductsList.innerText = "";
 
   productsList.forEach((product) => {
@@ -23,6 +22,7 @@ const loadProductsList = async () => {
 };
 
 const createProduct = async (data) => {
+  console.log(data);
   await fetch("/api/products", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -52,14 +52,17 @@ productsForm.onsubmit = (event) => {
   createProduct({
     name: formData.get("name"),
     description: formData.get("description"),
+    code: formData.get("code"),
+    price: formData.get("price"),
+    stock: formData.get("stock"),
+    category: formData.get("category"),
   });
 };
 
 btnDeleteProduct.onclick = () => {
-  const id = Number(inputProductId.value);
+  const id = inputProductId.value;
   inputProductId.value = "";
-
-  if (id > 0) {
+  if (id) {
     deleteProduct(id);
   }
 };

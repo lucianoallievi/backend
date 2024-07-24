@@ -1,17 +1,20 @@
 import { connect, Types } from "mongoose";
+import dotenv from "dotenv";
 
 const connectDB = () => {
-  const URI =
-    "mongodb+srv://lucianoallievi:lXNb1NN1cfoMIKxp@mycluster.dng0g8l.mongodb.net/";
+  dotenv.config();
+
+  const URI = process.env.DATABASE_URL;
+  const BASE = process.env.DATABASE_NAME;
 
   const options = {
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
-    dbName: "e-commerce",
+    dbName: BASE,
   };
 
   connect(URI, options)
-    .then(() => console.log("Conectado a MongoDB"))
+    .then(() => console.log(`Conectado a MongoDB. Base: ${BASE}`))
     .catch((err) => console.error("Error al conectar con MongoDB", err));
 };
 const isValidID = (id) => {
